@@ -1,0 +1,12 @@
+{
+  "name": "cohedron-plugins",
+  "owner": { "name": "Storm Wiggers" },
+  "description": "Claude Code plugins for the team.",
+  "plugins": [
+    {
+      "name": "agents-panel",
+      "source": "./",
+      "description": "/agents-panel: the skills you made, each as a one-click background agent."
+    }
+  ]
+}

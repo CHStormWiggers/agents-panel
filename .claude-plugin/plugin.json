@@ -1,0 +1,6 @@
+{
+  "name": "agents-panel",
+  "description": "/agents-panel: the skills you made, each as a one-click background agent with its own folder, live status, reports and replies.",
+  "author": { "name": "Storm Wiggers" },
+  "types": "./types/index.d.ts"
+}
