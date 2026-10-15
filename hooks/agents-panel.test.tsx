@@ -53,11 +53,13 @@ type WorldOptions = {
   chat?: string
   /** The run files on disk, shared with other chats; a test passes the same map to two chats. */
   files?: Map<string, string>
+  /** The session's commands and skills, in place of COMMANDS. */
+  commands?: CommandInfo[]
 }
 
 function world(
   on: On,
-  { hasManifest = true, missing = false, chat = 'chat-1', files = new Map() }: WorldOptions = {},
+  { hasManifest = true, missing = false, chat = 'chat-1', files = new Map(), commands = COMMANDS }: WorldOptions = {},
 ): World {
   // The kit hands a spawn over as the Agent tool's parameters (subagent_type, ...).
   const spawned: Record<string, unknown>[] = []
@@ -112,7 +114,7 @@ function world(
   on('ui.log', () => ({ value: undefined }))
   on('ui.focus', () => ({ value: {} }) as never)
   on('ui.open', () => ({ value: { isPlaced: true } }))
-  on('command.list', () => ({ value: COMMANDS }))
+  on('command.list', () => ({ value: commands }))
   on('command.register', (_$, e) => ({ value: { command: e.name } }))
   on('session.usage', () => {
     throw new Error('no breakdown in tests')
@@ -476,4 +478,19 @@ test('a folder set in another chat is kept when this chat sets one, and used at 
   expect(JSON.parse(files.get(FOLDERS) ?? '{}')).toEqual({ 'ic-invoices': INVOICES, 'my-report': ELSEWHERE })
   await ui.press({ key: await keyOf(ui, 'run-anthropic-skills-ic-invoices-') })
   expect(spawned[0]?.cwd).toBe(INVOICES)
+})
+
+test("in a session without the skills Claude's record names (a terminal), the skills folder is listed", async ($, on) => {
+  // Claude's record on this PC names ic-invoices and my-report, but this session has neither.
+  const { registered } = world(on, {
+    commands: [
+      { name: 'anthropic-skills:docx', description: 'Create and edit Word documents', source: 'plugin', plugin: 'anthropic-skills' },
+      { name: 'browser-harness', description: 'Direct browser control via CDP', source: 'user' },
+    ],
+  })
+  await startSession($)
+  expect(registered).toHaveLength(1)
+  expect(registered[0]).toMatch(/^browser-harness-/)
+  const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect(await ui.find({ text: /your skills folder/ }), 'section').toBeDefined()
 })

@@ -6,7 +6,7 @@ Pressing **run** starts that skill as a real agent: a subagent with its own cont
 
 ## What you get
 
-- **Your skills only.** Skills you made in Claude, not Anthropic's or built-in ones. Where Claude keeps no record of who made which (Claude Code in a terminal only), it lists the skills in your own skills folder (`~/.claude/skills`).
+- **Your skills only.** Skills you made in Claude, not Anthropic's or built-in ones. Where the session has no skills from Claude's record of who made which (Claude Code in a terminal, for instance), it lists the skills and custom commands from your own and the open project's Claude folders (`~/.claude/skills`, `~/.claude/commands`, and the project's `.claude/skills` and `.claude/commands`).
 - **Live status per agent.** ◌ running with a timer, then ✓ done, ! blocked, ? needs your answer, or ✗ failed, plus a toast and a notification when it ends.
 - **Reports and replies.** Press **report** (or **answer** when the agent stopped to ask you something) to read the report in the panel. Type a reply underneath and send it: in the same chat it goes to that agent, which carries on where it stopped; for a run from another chat, a new agent carries on from the report and your answer.
 - **A working folder per agent.** Click the `in …` line on a row and paste the folder that agent should work in. Skills written for Cowork's "connected folder" or `~/mnt/<name>` are told that this folder is that one.
@@ -48,7 +48,7 @@ If that line doesn't work for you, use the two-step form:
 - **Stop rules win.** When your skill says to stop and ask, the agent stops and puts the question in its report. It doesn't guess past it.
 - **Outward actions.** Agents are told not to send mail, publish, delete or pay unless your brief asks for it; they list such steps under "Needs your go-ahead".
 - **The first run in a new chat** may use a general-purpose agent that loads the skill itself, because Claude Code accepts newly registered agent types only from the next message on.
-- **Your data stays in your profile:** `~/.claude/agents-panel/folders.json` (folders) and `~/.claude/agents-panel/runs/` (each agent's last run). Delete that folder to start fresh.
+- **Your data stays in your profile:** `~/.claude/agents-panel/folders.json` (folders) and `~/.claude/agents-panel/runs/` (each agent's last run). Delete that folder to start fresh. Model choices are kept in the plugin's own settings store; click a row's model until it shows `inherit` to reset it.
 - **Early-access API.** The plugin API this is built on may change between Claude Code releases; update the plugin if the panel stops loading after an update.
 
 ## Development

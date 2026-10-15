@@ -237,7 +237,9 @@ async function discover($: EngineInterface): Promise<AgentsPanelAgent[]> {
   // The listing can leave skills out past its budget; the typeahead has them all.
   listed.push(...commands.filter(command => command.source === 'user' || command.source === 'plugin').map(command => command.name))
   const own = await ownSkills($)
-  const group = own.size > 0 ? MINE : LOCAL
+  // Claude's record counts only where this session has those skills (the
+  // Claude app); a terminal session on the same PC lists the skills folders.
+  const group = listed.some(name => own.has(labelOf(name))) ? MINE : LOCAL
   const local = new Set(commands.filter(command => command.source === 'user').map(command => command.name))
   const isOwn = (name: string) => (group === MINE ? own.has(labelOf(name)) : local.has(name))
   const seen = new Set<string>()
@@ -651,7 +653,7 @@ export const register: Register = on => {
     const started = await next(e)
     await $.command.register({
       name: COMMAND,
-      description: 'Show or hide the Agents panel: every skill as a one-click background agent',
+      description: 'Show or hide the Agents panel: the skills you made, each as a one-click background agent',
       immediate: true,
     })
     const kept = await $.store.get('models')
@@ -1024,7 +1026,7 @@ export const register: Register = on => {
           </Text>
         </Box>
         {briefField}
-        {agents.length === 0 ? <Text dimColor>No skills of your own found yet. Skills you make in Claude, or put in ~/.claude/skills, show up here; run /agents-panel again once the session has started.</Text> : null}
+        {agents.length === 0 ? <Text dimColor>No skills of your own found yet. In the Claude app, the skills you make in Claude show up here; in a terminal, the skills in ~/.claude/skills and this project's .claude/skills do. Run /agents-panel again once the session has started.</Text> : null}
         {groups.map(({ group, agents: members }) => {
           const [title, where] = groupTitle(group)
           return (
